@@ -1,7 +1,7 @@
 import scrapy
 
 class RecipeSpider(scrapy.Spider):
-    name = "recipe"
+    name = "recipes"
 
     start_urls = [
         'https://www.allrecipes.com/recipe/235158/worlds-best-honey-garlic-pork-chops/',
@@ -11,8 +11,9 @@ class RecipeSpider(scrapy.Spider):
     def parse(self, response):
         
         rating = response.css('.review-star-text::text').get()
+        # Lowest a recipe can be rated is 1 star 
         if 'Unrated' in rating:
-            rating = '-1'
+            rating = '0'
         else:
             rating = rating.replace('Rating:', '').replace('stars', '').strip()
     
@@ -39,7 +40,7 @@ class RecipeSpider(scrapy.Spider):
             'name': response.css('h1.headline.heading-content::text').get(),
             'url': response.url,
             'author': response.css('.author-name-title .authorName::text').get(),
-            'summary': response.css('.recipe-summary p::text').get(),
+            'summary': response.css('.recipe-summary p::text').get().strip(),
             'rating': rating,
             'rating_count': rating_count,
             'review_count': review_count,
