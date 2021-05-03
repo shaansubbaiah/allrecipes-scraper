@@ -35,7 +35,7 @@ class RecipeurlSpider(CrawlSpider):
             self.count += 1
 
             rating = response.css('.review-star-text::text').get()
-            # Lowest a recipe can be rated is 1 star
+            # lowest a recipe can be rated is 1 star
             if 'Unrated' in rating:
                 rating = 0.0
             else:
@@ -72,12 +72,14 @@ class RecipeurlSpider(CrawlSpider):
                 nutrient_value = nutrient.css(
                     '.nutrient-value::text').get().replace('\\n', '').strip()
 
+                # get the numerical quantity of nutrient
                 try:
                     value = re.findall(
                         r'[-+]?[0-9]*\.?[0-9]+', nutrient_value)[0]
                 except:
                     value = 0.0
 
+                # append unit to the nutrient name
                 try:
                     unit = re.findall(r'[a-zA-Z]+$', nutrient_value)[0]
                 except:
@@ -98,10 +100,11 @@ class RecipeurlSpider(CrawlSpider):
                 'rating': rating,
                 'rating_count': rating_count,
                 'review_count': review_count,
-                'ingredients': response.css('.ingredients-item-name::text').getall(),
-                'directions': response.css('.instructions-section-item p::text').getall()
+                'ingredients': ' '.join(response.css('.ingredients-item-name::text').getall()),
+                'directions': ' '.join(response.css('.instructions-section-item p::text').getall())
             }
 
+            # combine the 3 dictionaries
             data = data | recipe_meta | nutrients_list
 
             yield data
