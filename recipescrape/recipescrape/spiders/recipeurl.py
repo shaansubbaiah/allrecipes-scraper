@@ -5,37 +5,22 @@ import re
 
 
 class RecipeurlSpider(CrawlSpider):
-    name = 'recipeurl'
+    name = 'recipes'
     allowed_domains = ['allrecipes.com']
-    start_urls = [
-        # 'https://www.allrecipes.com/recipes/79/desserts/',
-        # 'https://www.allrecipes.com/recipes/79/desserts/?page=2',
-        'https://www.allrecipes.com/recipes/?page=2'
-    ]
 
-    # rule_recipe = Rule(LinkExtractor(restrict_css='.tout__imageLink',
-    #                                  allow=('recipe/')),
-    #                    callback='parse_item',
-    #                    follow=True,
-    #                    )
+    start_urls = ['https://www.allrecipes.com/recipes/?page=2']
 
     rule_next = Rule(LinkExtractor(restrict_css='.category-page-list-related-nav-next-button'),
                      follow=True,
                      )
 
-    rule_recipe2 = Rule(LinkExtractor(allow=(r'.+\/recipe\/.+\/$'), unique=True),
-                        callback='parse_item',
-                        follow=True,
-                        )
-
-    # rule_loadmore = Rule(LinkExtractor(restrict_css='#category-page-list-related-load-more-button'),
-    #                      follow=True,
-    #                      )
+    rule_recipe = Rule(LinkExtractor(allow=(r'.+\/recipe\/.+\/$'), unique=True),
+                       callback='parse_item',
+                       follow=True,
+                       )
 
     rules = (
-        # rule_recipe,
-        # rule_loadmore,
-        rule_recipe2,
+        rule_recipe,
         rule_next
     )
 
