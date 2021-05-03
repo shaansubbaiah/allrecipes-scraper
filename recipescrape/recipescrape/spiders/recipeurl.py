@@ -67,13 +67,28 @@ class RecipeurlSpider(CrawlSpider):
             nutrients = response.css('.nutrition-body .nutrition-row')
             for nutrient in nutrients:
                 nutrient_name = nutrient.css(
-                    '.nutrient-name::text').get().replace('\\n', '').strip()
+                    '.nutrient-name::text').get().replace('\\n', '').strip().replace(' ', '_')
+
                 nutrient_value = nutrient.css(
                     '.nutrient-value::text').get().replace('\\n', '').strip()
-                nutrients_list[nutrient_name] = nutrient_value
 
-            nutrients_list['calories'] = response.css(
-                '.nutrition-top::text').getall()[2].strip()
+                try:
+                    value = re.findall(
+                        r'[-+]?[0-9]*\.?[0-9]+', nutrient_value)[0]
+                except:
+                    value = 0.0
+
+                try:
+                    unit = re.findall(r'[a-zA-Z]+$', nutrient_value)[0]
+                except:
+                    pass
+                else:
+                    nutrient_name = nutrient_name[:-1] + "_" + unit
+
+                nutrients_list[nutrient_name] = float(value)
+
+            nutrients_list['calories'] = float(response.css(
+                '.nutrition-top::text').getall()[2].strip())
 
             data = {
                 'name': response.css('h1.headline.heading-content::text').get(),

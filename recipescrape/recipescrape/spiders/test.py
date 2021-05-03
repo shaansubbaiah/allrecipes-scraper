@@ -1,75 +1,81 @@
 import re
 data = {
-    "name": "Chocolate Chocolate Chip Cookies I",
-    "url": "https://www.allrecipes.com/recipe/9827/chocolate-chocolate-chip-cookies-i/",
-    "author": "KATHY",
-    "summary": "These cookies are great...you get a double dose of chocolate! My kids love them.",
-    "rating": "4.72",
-    "rating_count": "4140",
-    "review_count": "3099",
+    "name": "Graham Cracker Crust I",
+    "url": "https://www.allrecipes.com/recipe/12254/graham-cracker-crust-i/",
+    "author": "Carol",
+    "summary": "This goes great with many pies.",
+    "rating": 4.66,
+    "rating_count": 1140,
+    "review_count": 792,
     "ingredients": [
-        "1 cup butter, softened ",
-        "1\u2009\u00bd cups white sugar ",
-        "2  eggs ",
-        "2 teaspoons vanilla extract ",
-        "2 cups all-purpose flour ",
-        "\u2154 cup cocoa powder ",
-        "\u00be teaspoon baking soda ",
-        "\u00bc teaspoon salt ",
-        "2 cups semisweet chocolate chips ",
-        "\u00bd cup chopped walnuts  (Optional)"
+            "1\u2009\u00bd cups finely ground graham cracker crumbs ",
+            "\u2153 cup white sugar ",
+            "6 tablespoons butter, melted ",
+            "\u00bd teaspoon ground cinnamon  (Optional)"
     ],
     "directions": [
-        "Preheat oven to 350 degrees F (175 degrees C).",
-        "In large bowl, beat butter, sugar, eggs, and vanilla until light and fluffy. Combine the flour, cocoa, baking soda, and salt; stir into the butter mixture until well blended. Mix in the chocolate chips and walnuts. Drop by rounded teaspoonfuls onto ungreased cookie sheets.",
-        "Bake for 8 to 10 minutes in the preheated oven, or just until set. Cool slightly on the cookie sheets before transferring to wire racks to cool completely."
+        "Mix graham cracker crumbs, sugar, melted butter or margarine, and cinnamon until well blended . Press mixture into an 8 or 9 inch pie plate.",
+        "Bake at 375 degrees F (190 degrees C) for 7 minutes.  Cool.  If recipe calls for unbaked pie shell, just chill for about 1 hour."
     ],
-    "prep": "15 mins",
-    "cook": "10 mins",
-    "total": "20 mins",
-    "servings": "45 mins",
-    "yield": "48",
-    "calories": "124.7",
-    "nutrients": {
-        "protein:": "1.5g",
-        "carbohydrates:": "15.5g",
-        "dietary fiber:": "1g",
-        "sugars:": "10.2g",
-        "fat:": "7.1g",
-        "saturated fat:": "3.9g",
-        "cholesterol:": "17.9mg",
-        "vitamin a iu:": "128.6IU",
-        "niacin equivalents:": "0.7mg",
-        "folate:": "13.1mcg",
-        "calcium:": "mg",
-        "iron:": "0.7mg",
-        "magnesium:": "17.2mg",
-        "potassium:": "70.8mg",
-        "sodium:": "63.1mg",
-        "thiamin:": "0.1mg",
-        "calories from fat:": "64.3"
-    }
+    "prep": "10 mins",
+    "cook": "7 mins",
+    "total": "17 mins",
+    "Servings": "8",
+    "Yield": "1 pie crust",
+    "protein:": "1.2g",
+    "carbohydrates:": "20.5g",
+    "dietary fiber:": "0.5g",
+    "sugars:": "13.2g",
+    "fat:": "10.2g",
+    "saturated fat:": "5.7g",
+    "cholesterol:": "22.9mg",
+    "vitamin a iu:": "266.9IU",
+    "niacin equivalents:": "0.9mg",
+    "folate:": "7.6mcg",
+    "calcium:": "7.9mg",
+    "iron:": "0.6mg",
+    "magnesium:": "5mg",
+    "potassium:": "24.6mg",
+    "sodium:": "156.6mg",
+    "calories from fat:": "92.1",
+    "calories": "175.6"
 }
 
 
-x = data["nutrients"].values()
-print(x)
-print(type(x))
-for nutrient in x:
-    try:
-        val = float(re.findall(r'[-+]?[0-9]*\.?[0-9]+', nutrient)[0])
-    except:
-        val = 0.0
-    print(val)
+x = "mg"
 
-x = data["nutrients"]
-print(x)
-for nutrient in x:
-    # try:
-    #     val = float(re.findall(r'[-+]?[0-9]*\.?[0-9]+', nutrient)[0])
-    # except:
-    #     val = 0.0
-    # print(val)
-    print(re.findall(r'[a-zA-Z]+$', x[nutrient]))
+
+try:
+    val = re.findall(r'[-+]?[0-9]*\.?[0-9]+', x)[0]
+except:
+    val = 0.0
+
+try:
+    unit = re.findall(r'[a-zA-Z]+$', x)[0]
+except:
+    unit = ""
+
+print(val)
+print(unit)
+
+# x = data["nutrients"].values()
+# print(x)
+# print(type(x))
+# for nutrient in x:
+#     try:
+#         val = float(re.findall(r'[-+]?[0-9]*\.?[0-9]+', nutrient)[0])
+#     except:
+#         val = 0.0
+#     print(val)
+
+# x = data["nutrients"]
+# print(x)
+# for nutrient in x:
+#     # try:
+#     #     val = float(re.findall(r'[-+]?[0-9]*\.?[0-9]+', nutrient)[0])
+#     # except:
+#     #     val = 0.0
+#     # print(val)
+#     print(re.findall(r'[a-zA-Z]+$', x[nutrient]))
 
 # zip()
