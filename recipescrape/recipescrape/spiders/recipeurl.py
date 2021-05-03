@@ -85,7 +85,7 @@ class RecipeurlSpider(CrawlSpider):
         nutrients = response.css('.nutrition-body .nutrition-row')
         for nutrient in nutrients:
             nutrient_name = nutrient.css(
-                '.nutrient-name::text').get().replace('\\n', '').strip().replace(' ', '_')
+                '.nutrient-name::text').get().replace('\\n', '').strip().replace(' ', '_')[:-1]
 
             nutrient_value = nutrient.css(
                 '.nutrient-value::text').get().replace('\\n', '').strip()
@@ -103,7 +103,7 @@ class RecipeurlSpider(CrawlSpider):
             except:
                 pass
             else:
-                nutrient_name = nutrient_name[:-1] + "_" + unit
+                nutrient_name = nutrient_name + "_" + unit
 
             nutrients_list[nutrient_name] = float(value)
 
@@ -119,7 +119,7 @@ class RecipeurlSpider(CrawlSpider):
             'rating': rating,
             'rating_count': rating_count,
             'review_count': review_count,
-            'ingredients': ' '.join(response.css('.ingredients-item-name::text').getall()),
+            'ingredients': '; '.join(response.css('.ingredients-item-name::text').getall()),
             'directions': ' '.join(response.css('.instructions-section-item p::text').getall())
         }
 
