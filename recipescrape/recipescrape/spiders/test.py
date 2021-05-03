@@ -42,22 +42,25 @@ data = {
 }
 
 
-x = "mg"
+# x = "mg"
 
 
-try:
-    val = re.findall(r'[-+]?[0-9]*\.?[0-9]+', x)[0]
-except:
-    val = 0.0
+# try:
+#     val = re.findall(r'[-+]?[0-9]*\.?[0-9]+', x)[0]
+# except:
+#     val = 0.0
 
-try:
-    unit = re.findall(r'[a-zA-Z]+$', x)[0]
-except:
-    unit = ""
+# try:
+#     unit = re.findall(r'[a-zA-Z]+$', x)[0]
+# except:
+#     unit = ""
 
-print(val)
-print(unit)
+# print(val)
+# print(unit)
 
+
+t = "https: // www.allrecipes.com/recipes/ https: // www.allrecipes.com/recipe/12254/graham-cracker-crust-i/ https: // www.allrecipes.com/recipe/7255/dirt-cake-i/ RegExr was created by gskinner.com, and is proudly hosted by Media Temple. Edit the Expression & Text to see matches. Roll over matches or the expression for details. PCRE & JavaScript flavors of RegEx are supported. Validate your expression with Tests mode. The side bar includes a Cheatsheet, full Reference, and Help. You can also Save & Share with the Community, and view patterns you create or favorite in My Patterns. Explore results with the Tools below. Replace & List output custom results. Details lists capture groups. Explain describes your expression in plain English."
+print(re.findall(r'.+\/recipe\/.+', t))
 # x = data["nutrients"].values()
 # print(x)
 # print(type(x))
