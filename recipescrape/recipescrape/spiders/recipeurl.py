@@ -27,13 +27,12 @@ class RecipeurlSpider(CrawlSpider):
         rule_next
     )
 
-    count = 0
-
     def parse_item(self, response):
 
-        self.count += 1
-        if DEBUG is True:
-            self.log(f'{self.count}) {response.url}', logging.WARNING)
+        if DEBUG:
+            self.state['items_count'] = self.state.get('items_count', 0) + 1
+            self.log(
+                f"{self.state['items_count']} {response.url}", logging.WARN)
 
         breadcrumb_links = response.css(
             '.breadcrumbs__link::attr(href)').getall()
@@ -49,6 +48,12 @@ class RecipeurlSpider(CrawlSpider):
         else:
             rating = float(rating.replace(
                 'Rating:', '').replace('stars', '').strip())
+
+        # try:
+        #     rating = re.findall(r'[-+]?[0-9]*\.?[0-9]+',
+        #                         response.css('.review-star-text::text').get())[0]
+        # except:
+        #     rating = 0.0
 
         rating_count = response.css('.ratings-count::text').get()
         if rating_count is not None:
