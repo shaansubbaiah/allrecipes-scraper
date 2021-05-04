@@ -2,6 +2,9 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 import re
+import logging
+
+DEBUG = True
 
 
 class RecipeurlSpider(CrawlSpider):
@@ -28,8 +31,10 @@ class RecipeurlSpider(CrawlSpider):
 
     def parse_item(self, response):
 
-        # if self.count < 10:
-        #     self.count += 1
+        self.count += 1
+        if DEBUG is True:
+            self.log(f'{self.count}) {response.url}', logging.WARNING)
+
         breadcrumb_links = response.css(
             '.breadcrumbs__link::attr(href)').getall()
         try:
@@ -92,20 +97,25 @@ class RecipeurlSpider(CrawlSpider):
 
             nutrients_list[nutrient_name] = float(value)
 
-        nutrients_list['calories'] = float(response.css(
-            '.nutrition-top::text').getall()[2].strip())
+        try:
+            nutrients_list['calories'] = float(response.css(
+                '.nutrition-top::text').getall()[2].strip())
+        except:
+            pass
+
+        remove_escapes = {ord(c): None for c in u'\r\n\t'}
 
         data = {
             'name': response.css('h1.headline.heading-content::text').get(),
             'url': response.url,
             'category': category,
             'author': response.css('.author-name-title .authorName::text').get(),
-            'summary': response.css('.recipe-summary p::text').get().strip(),
+            'summary': response.css('.recipe-summary p::text').get().strip().translate(remove_escapes),
             'rating': rating,
             'rating_count': rating_count,
             'review_count': review_count,
-            'ingredients': '; '.join(response.css('.ingredients-item-name::text').getall()),
-            'directions': ' '.join(response.css('.instructions-section-item p::text').getall())
+            'ingredients': '; '.join(response.css('.ingredients-item-name::text').getall()).translate(remove_escapes),
+            'directions': ' '.join(response.css('.instructions-section-item p::text').getall()).translate(remove_escapes)
         }
 
         # combine the 3 dictionaries

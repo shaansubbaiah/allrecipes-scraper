@@ -59,8 +59,14 @@ data = {
 # print(unit)
 
 
-t = "https: // www.allrecipes.com/recipes/ https: // www.allrecipes.com/recipe/12254/graham-cracker-crust-i/ https: // www.allrecipes.com/recipe/7255/dirt-cake-i/ RegExr was created by gskinner.com, and is proudly hosted by Media Temple. Edit the Expression & Text to see matches. Roll over matches or the expression for details. PCRE & JavaScript flavors of RegEx are supported. Validate your expression with Tests mode. The side bar includes a Cheatsheet, full Reference, and Help. You can also Save & Share with the Community, and view patterns you create or favorite in My Patterns. Explore results with the Tools below. Replace & List output custom results. Details lists capture groups. Explain describes your expression in plain English."
-print(re.findall(r'.+\/recipe\/.+', t))
+remove_escapes = {ord(c): None for c in u'\r\n\t'}
+s = "Quick and easy recipe for roasted baby potatoes. Bake them at the same time as you cook your main dish!\n Can also be used as a quick appetizer!\n\n These were so good you don't even need butter or salt to taste. Made the mistake of having them done before the main dish and they were almost all gone by the time dinner started!"
+print(s)
+print(s.translate(remove_escapes))
+
+
+# t = "https: // www.allrecipes.com/recipes/ https: // www.allrecipes.com/recipe/12254/graham-cracker-crust-i/ https: // www.allrecipes.com/recipe/7255/dirt-cake-i/ RegExr was created by gskinner.com, and is proudly hosted by Media Temple. Edit the Expression & Text to see matches. Roll over matches or the expression for details. PCRE & JavaScript flavors of RegEx are supported. Validate your expression with Tests mode. The side bar includes a Cheatsheet, full Reference, and Help. You can also Save & Share with the Community, and view patterns you create or favorite in My Patterns. Explore results with the Tools below. Replace & List output custom results. Details lists capture groups. Explain describes your expression in plain English."
+# print(re.findall(r'.+\/recipe\/.+', t))
 # x = data["nutrients"].values()
 # print(x)
 # print(type(x))
