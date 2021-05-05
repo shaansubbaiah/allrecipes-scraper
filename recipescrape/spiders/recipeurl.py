@@ -31,10 +31,8 @@ def getText(x, index=0, toLower=False):
     # extracts only the alphabetical portion of text
     try:
         tmp = re.findall(r'[a-zA-Z_]+', x)[index]
-
         if toLower:
             return tmp.lower()
-
         return tmp
 
     except:
@@ -74,6 +72,7 @@ class RecipeurlSpider(CrawlSpider):
             self.log(
                 f"{self.state['items_count']} {response.url}", logging.WARN)
 
+        # extract category from breadcrumb url
         breadcrumb_links = response.css(
             '.breadcrumbs__link::attr(href)').getall()
         try:
@@ -82,37 +81,14 @@ class RecipeurlSpider(CrawlSpider):
             category = 'uncategorized'
 
         rating = getFloat(response.css('.review-star-text::text').get())
-        # rating = response.css('.review-star-text::text').get()
-        # lowest a recipe can be rated is 1 star
-        # if 'Unrated' in rating:
-        #     rating = 0.0
-        # else:
-        #     rating = float(rating.replace(
-        #         'Rating:', '').replace('stars', '').strip())
-
-        # try:
-        #     rating = re.findall(r'[-+]?[0-9]*\.?[0-9]+',
-        #                         response.css('.review-star-text::text').get())[0]
-        # except:
-        #     rating = 0.0
 
         rating_count = int(
             getFloat(response.css('.ratings-count::text').get()))
-        # rating_count = response.css('.ratings-count::text').get()
-        # if rating_count is not None:
-        #     rating_count = int(rating_count.replace(
-        #         '\\n', '').replace('Ratings', '').strip())
-        # else:
-        #     rating_count = 0
 
         review_count = int(getFloat(response.css(
             '.review-headline-count::text').get()))
-        # review_count = response.css('.review-headline-count::text').get()
-        # if review_count is not None:
-        #     review_count = int(review_count.strip()[1:-1])
-        # else:
-        #     review_count = 0
 
+        # recipe meta -> 'prep', 'cook', 'total', 'servings', 'yield'
         recipe_meta = {}
         recipe_meta_headers = response.css(
             '.recipe-meta-item-header::text').getall()
@@ -128,41 +104,19 @@ class RecipeurlSpider(CrawlSpider):
         for nutrient in nutrients:
             n_name = delSpaces(nutrient.css('.nutrient-name::text').get())
             n_name = getText(n_name.replace(' ', '_'))
-            # .replace(' ', '_')[:-1]
-            # nutrient_name = nutrient.css(
-            #     '.nutrient-name::text').get().replace('\\n', '').strip().replace(' ', '_')[:-1]
 
             # get the numerical quantity of nutrient
             n_value = getFloat(nutrient.css('.nutrient-value::text').get())
-            # try:
-            #     value = re.findall(
-            #         r'[-+]?[0-9]*\.?[0-9]+', nutrient_value)[0]
-            # except:
-            #     value = 0.0
 
             # append unit to the nutrient name
             n_unit = getText(nutrient.css('.nutrient-value::text').get())
             if n_unit is not '':
                 n_name += "_" + n_unit
-            # try:
-            #     unit = re.findall(r'[a-zA-Z]+$', nutrient_value)[0]
-            # except:
-            #     pass
-            # else:
-            #     nutrient_name = nutrient_name + "_" + unit
 
             nutrients_list[n_name] = n_value
-            # nutrients_list[nutrient_name] = float(value)
 
         nutrients_list['calories'] = getFloat(response.css(
             '.nutrition-top::text').getall()[2])
-        # try:
-        #     nutrients_list['calories'] = float(response.css(
-        #         '.nutrition-top::text').getall()[2].strip())
-        # except:
-        #     pass
-
-        # remove_escapes = {ord(c): None for c in u'\r\n\t'}
 
         data = {
             'name': response.css('h1.headline.heading-content::text').get(),
