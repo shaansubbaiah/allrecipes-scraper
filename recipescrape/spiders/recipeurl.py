@@ -19,6 +19,33 @@ FIELDS = [
 ]
 
 
+def getFloat(x, index=0):
+    # extracts only the numerical portion of text
+    try:
+        return float(re.findall(r'[-+]?[0-9]*\.?[0-9]+', x)[index])
+    except:
+        return 0.0
+
+
+def getText(x, index=0, toLower=False):
+    # extracts only the alphabetical portion of text
+    try:
+        tmp = re.findall(r'[a-zA-Z_]+', x)[index]
+
+        if toLower:
+            return tmp.lower()
+
+        return tmp
+
+    except:
+        return ''
+
+
+def delSpaces(x):
+    # strips and removes annoying carriage returns
+    return x.translate({ord(c): None for c in u'\r\n\t'}).strip()
+
+
 class RecipeurlSpider(CrawlSpider):
     name = 'recipes'
     allowed_domains = ['allrecipes.com']
@@ -38,10 +65,7 @@ class RecipeurlSpider(CrawlSpider):
                        follow=True,
                        )
 
-    rules = (
-        rule_recipe,
-        rule_next
-    )
+    rules = (rule_recipe, rule_next)
 
     def parse_item(self, response):
 
@@ -57,13 +81,14 @@ class RecipeurlSpider(CrawlSpider):
         except:
             category = 'uncategorized'
 
-        rating = response.css('.review-star-text::text').get()
+        rating = getFloat(response.css('.review-star-text::text').get())
+        # rating = response.css('.review-star-text::text').get()
         # lowest a recipe can be rated is 1 star
-        if 'Unrated' in rating:
-            rating = 0.0
-        else:
-            rating = float(rating.replace(
-                'Rating:', '').replace('stars', '').strip())
+        # if 'Unrated' in rating:
+        #     rating = 0.0
+        # else:
+        #     rating = float(rating.replace(
+        #         'Rating:', '').replace('stars', '').strip())
 
         # try:
         #     rating = re.findall(r'[-+]?[0-9]*\.?[0-9]+',
@@ -71,18 +96,22 @@ class RecipeurlSpider(CrawlSpider):
         # except:
         #     rating = 0.0
 
-        rating_count = response.css('.ratings-count::text').get()
-        if rating_count is not None:
-            rating_count = int(rating_count.replace(
-                '\\n', '').replace('Ratings', '').strip())
-        else:
-            rating_count = 0
+        rating_count = int(
+            getFloat(response.css('.ratings-count::text').get()))
+        # rating_count = response.css('.ratings-count::text').get()
+        # if rating_count is not None:
+        #     rating_count = int(rating_count.replace(
+        #         '\\n', '').replace('Ratings', '').strip())
+        # else:
+        #     rating_count = 0
 
-        review_count = response.css('.review-headline-count::text').get()
-        if review_count is not None:
-            review_count = int(review_count.strip()[1:-1])
-        else:
-            review_count = 0
+        review_count = int(getFloat(response.css(
+            '.review-headline-count::text').get()))
+        # review_count = response.css('.review-headline-count::text').get()
+        # if review_count is not None:
+        #     review_count = int(review_count.strip()[1:-1])
+        # else:
+        #     review_count = 0
 
         recipe_meta = {}
         recipe_meta_headers = response.css(
@@ -90,53 +119,62 @@ class RecipeurlSpider(CrawlSpider):
         recipe_meta_bodies = response.css(
             '.recipe-meta-item-body::text').getall()
         for (h, b) in zip(recipe_meta_headers, recipe_meta_bodies):
-            recipe_meta[h[:-1].lower()] = b.replace('\\n', '').strip()
+            h = getText(h, toLower=True)
+            b = delSpaces(b)
+            recipe_meta[h] = b
 
         nutrients_list = {}
         nutrients = response.css('.nutrition-body .nutrition-row')
         for nutrient in nutrients:
-            nutrient_name = nutrient.css(
-                '.nutrient-name::text').get().replace('\\n', '').strip().replace(' ', '_')[:-1]
-
-            nutrient_value = nutrient.css(
-                '.nutrient-value::text').get().replace('\\n', '').strip()
+            n_name = delSpaces(nutrient.css('.nutrient-name::text').get())
+            n_name = getText(n_name.replace(' ', '_'))
+            # .replace(' ', '_')[:-1]
+            # nutrient_name = nutrient.css(
+            #     '.nutrient-name::text').get().replace('\\n', '').strip().replace(' ', '_')[:-1]
 
             # get the numerical quantity of nutrient
-            try:
-                value = re.findall(
-                    r'[-+]?[0-9]*\.?[0-9]+', nutrient_value)[0]
-            except:
-                value = 0.0
+            n_value = getFloat(nutrient.css('.nutrient-value::text').get())
+            # try:
+            #     value = re.findall(
+            #         r'[-+]?[0-9]*\.?[0-9]+', nutrient_value)[0]
+            # except:
+            #     value = 0.0
 
             # append unit to the nutrient name
-            try:
-                unit = re.findall(r'[a-zA-Z]+$', nutrient_value)[0]
-            except:
-                pass
-            else:
-                nutrient_name = nutrient_name + "_" + unit
+            n_unit = getText(nutrient.css('.nutrient-value::text').get())
+            if n_unit is not '':
+                n_name += "_" + n_unit
+            # try:
+            #     unit = re.findall(r'[a-zA-Z]+$', nutrient_value)[0]
+            # except:
+            #     pass
+            # else:
+            #     nutrient_name = nutrient_name + "_" + unit
 
-            nutrients_list[nutrient_name] = float(value)
+            nutrients_list[n_name] = n_value
+            # nutrients_list[nutrient_name] = float(value)
 
-        try:
-            nutrients_list['calories'] = float(response.css(
-                '.nutrition-top::text').getall()[2].strip())
-        except:
-            pass
+        nutrients_list['calories'] = getFloat(response.css(
+            '.nutrition-top::text').getall()[2])
+        # try:
+        #     nutrients_list['calories'] = float(response.css(
+        #         '.nutrition-top::text').getall()[2].strip())
+        # except:
+        #     pass
 
-        remove_escapes = {ord(c): None for c in u'\r\n\t'}
+        # remove_escapes = {ord(c): None for c in u'\r\n\t'}
 
         data = {
             'name': response.css('h1.headline.heading-content::text').get(),
             'url': response.url,
             'category': category,
             'author': response.css('.author-name-title .authorName::text').get(),
-            'summary': response.css('.recipe-summary p::text').get().strip().translate(remove_escapes),
+            'summary': delSpaces(response.css('.recipe-summary p::text').get()),
             'rating': rating,
             'rating_count': rating_count,
             'review_count': review_count,
-            'ingredients': '; '.join(response.css('.ingredients-item-name::text').getall()).translate(remove_escapes),
-            'directions': ' '.join(response.css('.instructions-section-item p::text').getall()).translate(remove_escapes)
+            'ingredients': delSpaces('; '.join(response.css('.ingredients-item-name::text').getall())),
+            'directions': delSpaces(' '.join(response.css('.instructions-section-item p::text').getall()))
         }
 
         # combine the 3 dictionaries
