@@ -4,7 +4,19 @@ from scrapy.spiders import CrawlSpider, Rule
 import re
 import logging
 
-DEBUG = True
+DEBUG = False
+FIELDS = [
+    # Recipe and related information
+    'name', 'url', 'category', 'author', 'summary', 'rating', 'rating_count', 'review_count', 'ingredients', 'directions', 'prep', 'cook', 'total', 'servings', 'yield',
+    # Nutritional information
+    'calories', 'carbohydrates_g', 'sugars_g', 'fat_g', 'saturated_fat_g', 'cholesterol_mg', 'protein_g', 'dietary_fiber_g', 'sodium_mg', 'calories_from_fat',
+    # Additional nutritional info - Metals
+    'calcium_mg', 'iron_mg', 'magnesium_mg', 'potassium_mg', 'zinc_mg', 'phosphorus_mg',
+    # Additional nutritional info - Vitamins
+    'vitamin_a_iu_IU', 'niacin_equivalents_mg', 'vitamin_b6_mg', 'vitamin_c_mg', 'folate_mcg', 'thiamin_mg', 'riboflavin_mg', 'vitamin_e_iu_IU', 'vitamin_k_mcg', 'biotin_mcg', 'vitamin_b12_mcg',
+    # Additional nutritional info - Fats
+    'mono_fat_g', 'poly_fat_g', 'trans_fatty_acid_g', 'omega_3_fatty_acid_g', 'omega_6_fatty_acid_g'
+]
 
 
 class RecipeurlSpider(CrawlSpider):
@@ -12,6 +24,10 @@ class RecipeurlSpider(CrawlSpider):
     allowed_domains = ['allrecipes.com']
 
     start_urls = ['https://www.allrecipes.com/recipes/?page=2']
+
+    custom_settings = {
+        'FEED_EXPORT_FIELDS': FIELDS
+    }
 
     rule_next = Rule(LinkExtractor(restrict_css='.category-page-list-related-nav-next-button'),
                      follow=True,
@@ -74,7 +90,7 @@ class RecipeurlSpider(CrawlSpider):
         recipe_meta_bodies = response.css(
             '.recipe-meta-item-body::text').getall()
         for (h, b) in zip(recipe_meta_headers, recipe_meta_bodies):
-            recipe_meta[h[:-1]] = b.replace('\\n', '').strip()
+            recipe_meta[h[:-1].lower()] = b.replace('\\n', '').strip()
 
         nutrients_list = {}
         nutrients = response.css('.nutrition-body .nutrition-row')
