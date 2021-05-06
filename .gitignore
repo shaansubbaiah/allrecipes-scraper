@@ -1,3 +1,5 @@
+# dir to maintain persistance in the spider
+jobs/
 # scratchpad to test snippets
 temp.py
 

@@ -4,7 +4,7 @@ from scrapy.spiders import CrawlSpider, Rule
 import re
 import logging
 
-DEBUG = False
+DEBUG = True
 FIELDS = [
     # Recipe and related information
     'name', 'url', 'category', 'author', 'summary', 'rating', 'rating_count', 'review_count', 'ingredients', 'directions', 'prep', 'cook', 'total', 'servings', 'yield',
@@ -44,14 +44,23 @@ def delSpaces(x):
     return x.translate({ord(c): None for c in u'\r\n\t'}).strip()
 
 
-class RecipeurlSpider(CrawlSpider):
+class RecipeSpider(CrawlSpider):
     name = 'recipes'
     allowed_domains = ['allrecipes.com']
 
     start_urls = ['https://www.allrecipes.com/recipes/?page=2']
 
     custom_settings = {
-        'FEED_EXPORT_FIELDS': FIELDS
+        'FEED_EXPORT_FIELDS': FIELDS,
+        'FEEDS': {
+            './export/recipes.jsonl': {
+                'format': 'jsonlines',
+                'encoding': 'utf8',
+            },
+            './export/recipes.csv': {
+                'format': 'csv'
+            },
+        }
     }
 
     rule_next = Rule(LinkExtractor(restrict_css='.category-page-list-related-nav-next-button'),
@@ -110,7 +119,7 @@ class RecipeurlSpider(CrawlSpider):
 
             # append unit to the nutrient name
             n_unit = getText(nutrient.css('.nutrient-value::text').get())
-            if n_unit is not '':
+            if n_unit != '':
                 n_name += "_" + n_unit
 
             nutrients_list[n_name] = n_value
