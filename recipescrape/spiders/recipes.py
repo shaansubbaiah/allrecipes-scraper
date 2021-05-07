@@ -124,8 +124,11 @@ class RecipeSpider(CrawlSpider):
 
             nutrients_list[n_name] = n_value
 
-        nutrients_list['calories'] = getFloat(response.css(
-            '.nutrition-top::text').getall()[2])
+        try:
+            nutrients_list['calories'] = getFloat(
+                response.css('.nutrition-top::text').getall()[2])
+        except:
+            pass
 
         data = {
             'name': response.css('h1.headline.heading-content::text').get(),
