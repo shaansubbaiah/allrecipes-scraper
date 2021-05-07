@@ -48,7 +48,29 @@ class RecipeSpider(CrawlSpider):
     name = 'recipes'
     allowed_domains = ['allrecipes.com']
 
-    start_urls = ['https://www.allrecipes.com/recipes/?page=2']
+    start_urls = [
+        'https://www.allrecipes.com/recipes/?page=2',
+        'https://www.allrecipes.com/recipes/76/appetizers-and-snacks/?page=2',
+        'https://www.allrecipes.com/recipes/88/bbq-grilling/?page=2',
+        'https://www.allrecipes.com/recipes/156/bread/?page=2',
+        'https://www.allrecipes.com/recipes/78/breakfast-and-brunch/?page=2',
+        'https://www.allrecipes.com/recipes/79/desserts/?page=2',
+        'https://www.allrecipes.com/recipes/17562/dinner/?page=2',
+        'https://www.allrecipes.com/recipes/1642/everyday-cooking/?page=2',
+        'https://www.allrecipes.com/recipes/84/healthy-recipes/?page=2',
+        'https://www.allrecipes.com/recipes/85/holidays-and-events/?page=2',
+        'https://www.allrecipes.com/recipes/17567/ingredients/?page=2',
+        'https://www.allrecipes.com/recipes/17561/lunch/?page=2',
+        'https://www.allrecipes.com/recipes/80/main-dish/?page=2',
+        'https://www.allrecipes.com/recipes/92/meat-and-poultry/?page=2',
+        'https://www.allrecipes.com/recipes/95/pasta-and-noodles/?page=2',
+        'https://www.allrecipes.com/recipes/96/salad/?page=2',
+        'https://www.allrecipes.com/recipes/93/seafood/?page=2',
+        'https://www.allrecipes.com/recipes/81/side-dish/?page=2',
+        'https://www.allrecipes.com/recipes/94/soups-stews-and-chili/?page=2',
+        'https://www.allrecipes.com/recipes/236/us-recipes/?page=2',
+        'https://www.allrecipes.com/recipes/86/world-cuisine/?page=2',
+    ]
 
     custom_settings = {
         'FEED_EXPORT_FIELDS': FIELDS,
