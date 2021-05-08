@@ -1,5 +1,9 @@
 import pandas as pd
 
+# just included for reference
+# this can be improved by using loops, reading the dir for CSV files.
+
+# read the created CSV files 
 df1 = pd.read_csv('1.csv')
 
 print(df1.head())
@@ -17,11 +21,13 @@ print(len(df3))
 
 print(f'total: {len(df1)+len(df2)+len(df3)}')
 
+# generate a single combined CSV
 df4 = pd.concat([df1, df2, df3])
 print(df4.head())
 combined_len = len(df4)
 print(combined_len)
 
+# drop duplicated entries if any
 df4 = df4.drop_duplicates()
 print(df4.head())
 unique_len = len(df4)
@@ -30,6 +36,7 @@ print(f'unique% = {unique_len/combined_len*100}')
 
 df4.to_csv('combined.csv', index=False)
 
+# view the combined CSV with unique entries
 df5 = pd.read_csv('combined.csv')
 print(df5.head())
 print(len(df5))

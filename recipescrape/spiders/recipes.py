@@ -4,7 +4,7 @@ from scrapy.spiders import CrawlSpider, Rule
 import re
 import logging
 
-DEBUG = True
+DEBUG = False
 FIELDS = [
     # Recipe and related information
     'name', 'url', 'category', 'author', 'summary', 'rating', 'rating_count', 'review_count', 'ingredients', 'directions', 'prep', 'cook', 'total', 'servings', 'yield',
