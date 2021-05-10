@@ -1,6 +1,6 @@
 <div align="center">
 <h1> AllRecipes Scraper 🥗</h1>
-Scrapy spider to scrape recipe and nutritional data from <code>www.allrecipes.com</code>. Data can be found in <code>/export</code>. 
+Scrapy spider to scrape recipe and nutritional data from <code>www.allrecipes.com</code>. <strong>35,516 recipes</strong> scraped, found in <code>/export</code>. 
 <br>
 Data was used to provide insight of the nutritional value of various recipes.
 </div>
